@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Colaborador - SyncStays</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .sidebar-item { transition: all 0.3s ease; }
+        .sidebar-item:hover, .sidebar-item.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .task-card { transition: all 0.3s ease; }
+        .task-card:hover { transform: translateX(5px); }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Sidebar -->
+    <aside class="fixed left-0 top-0 h-full w-64 bg-white shadow-xl z-50">
+        <div class="p-6 border-b border-gray-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center text-white">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">SyncStays</h1>
+                    <p class="text-xs text-gray-500">Colaborador</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="p-4 space-y-1">
+            <button onclick="showSection('tasks')" class="sidebar-item active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-gray-600">
+                <i class="fas fa-clipboard-list w-5"></i>Minhas Tarefas
+            </button>
+            <button onclick="showSection('calendar')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-gray-600">
+                <i class="fas fa-calendar-alt w-5"></i>Calendário
+            </button>
+            <button onclick="showSection('properties')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-gray-600">
+                <i class="fas fa-building w-5"></i>Imóveis
+            </button>
+        </nav>
+
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100 bg-white">
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold" id="user-avatar">MO</div>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900" id="user-name">Maria Oliveira</p>
+                    <p class="text-xs text-gray-500">Faxineira</p>
+                </div>
+                <button onclick="logout()" class="text-gray-400 hover:text-red-600">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-64 p-8">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800" id="page-title">Minhas Tarefas</h2>
+                <p class="text-gray-500 mt-1">Visualize suas limpezas e manutenções agendadas</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-2 flex items-center gap-2">
+                    <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                    <span class="text-sm text-yellow-800">3 tarefas pendentes</span>
+                </div>
+                <button class="w-10 h-10 rounded-xl bg-white shadow flex items-center justify-center text-gray-600 relative">
+                    <i class="fas fa-bell"></i>
+                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">2</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Tasks Section -->
+        <section id="tasks-section" class="space-y-6">
+            
+            <!-- Alert: No financial data access -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+                <i class="fas fa-info-circle text-blue-600 mt-1"></i>
+                <div>
+                    <p class="text-sm text-blue-800 font-medium">Acesso limitado</p>
+                    <p class="text-sm text-blue-600">Você tem acesso apenas às datas de trabalho. Valores e dados financeiros são restritos.</p>
+                </div>
+            </div>
+
+            <!-- Today's Tasks -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 class="font-bold text-lg text-gray-800 mb-4">Hoje - 14 de Março</h3>
+                <div class="space-y-4">
+                    <div class="task-card bg-red-50 border-l-4 border-red-500 rounded-xl p-4 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                                <i class="fas fa-broom text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Limpeza Pós-Checkout</h4>
+                                <p class="text-sm text-gray-600">Apartamento Copacabana • Check-out: 10:00</p>
+                                <p class="text-xs text-gray-500 mt-1">Hóspede: Ana Silva • Quartos: 2</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs font-medium">Urgente</span>
+                            <button class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center text-green-600 hover:bg-green-50">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tomorrow -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 class="font-bold text-lg text-gray-800 mb-4">Amanhã - 15 de Março</h3>
+                <div class="space-y-4">
+                    <div class="task-card bg-blue-50 border-l-4 border-blue-500 rounded-xl p-4 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                <i class="fas fa-broom text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Limpeza Pós-Checkout</h4>
+                                <p class="text-sm text-gray-600">Casa Jurerê • Check-out: 12:00</p>
+                                <p class="text-xs text-gray-500 mt-1">Hóspede: Pedro Costa • Quartos: 4</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-medium">Agendado</span>
+                            <button class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center text-gray-400 hover:text-green-600">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="task-card bg-yellow-50 border-l-4 border-yellow-500 rounded-xl p-4 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
+                                <i class="fas fa-tools text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Manutenção Preventiva</h4>
+                                <p class="text-sm text-gray-600">Apartamento Copacabana • 14:00</p>
+                                <p class="text-xs text-gray-500 mt-1">Troca de filtros de ar-condicionado</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-600 rounded-full text-xs font-medium">Manutenção</span>
+                            <button class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center text-gray-400 hover:text-green-600">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Days -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 class="font-bold text-lg text-gray-800 mb-4">Próximos Dias</h3>
+                <div class="space-y-4">
+                    <div class="task-card bg-gray-50 border-l-4 border-gray-300 rounded-xl p-4 flex items-center justify-between opacity-75">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+                                <i class="fas fa-broom text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Limpeza Pós-Checkout</h4>
+                                <p class="text-sm text-gray-600">Loft Centro SP • 16 de Março • Check-out: 11:00</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">Pendente</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calendar Section -->
+        <section id="calendar-section" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 class="font-bold text-lg text-gray-800 mb-4">Calendário de Trabalho</h3>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
+                    <p class="text-sm text-yellow-800"><i class="fas fa-info-circle mr-2"></i>Você só vê datas de check-out (para limpeza) e agendamentos de manutenção. Sem acesso a valores.</p>
+                </div>
+                <div class="grid grid-cols-7 gap-2">
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Dom</div>
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Seg</div>
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Ter</div>
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Qua</div>
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Qui</div>
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Sex</div>
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Sáb</div>
+                    
+                    <!-- Calendar days with tasks -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                    <div class="bg-red-100 border-2 border-red-400 rounded-lg p-2 h-24">
+                        <div class="font-bold text-red-600">14</div>
+                        <div class="text-xs text-red-700 mt-1"><i class="fas fa-broom"></i> Limpeza</div>
+                        <div class="text-xs text-red-600">Copacabana</div>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Properties Section -->
+        <section id="properties-section" class="hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 class="font-bold text-lg text-gray-800 mb-4">Meus Imóveis Atribuídos</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-gray-200 rounded-xl p-4 flex items-center gap-4">
+                        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=100&h=100&fit=crop" class="w-20 h-20 rounded-lg object-cover">
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Apartamento Copacabana</h4>
+                            <p class="text-sm text-gray-500">Rio de Janeiro, RJ</p>
+                            <span class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-600 rounded text-xs">Limpeza</span>
+                        </div>
+                    </div>
+                    <div class="border border-gray-200 rounded-xl p-4 flex items-center gap-4">
+                        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=100&h=100&fit=crop" class="w-20 h-20 rounded-lg object-cover">
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Casa Jurerê</h4>
+                            <p class="text-sm text-gray-500">Florianópolis, SC</p>
+                            <span class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-600 rounded text-xs">Limpeza</span>
+                            <span class="inline-block mt-2 px-2 py-1 bg-yellow-100 text-yellow-600 rounded text-xs ml-1">Manutenção</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function showSection(section) {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(section + '-section').classList.remove('hidden');
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const titles = {
+                'tasks': 'Minhas Tarefas',
+                'calendar': 'Calendário de Trabalho',
+                'properties': 'Imóveis Atribuídos'
+            };
+            document.getElementById('page-title').textContent = titles[section];
+        }
+
+        function logout() {
+            localStorage.removeItem('syncstays_user');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

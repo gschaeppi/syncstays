@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard do Proprietário - SyncStays</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .sidebar-item { transition: all 0.3s ease; }
+        .sidebar-item:hover, .sidebar-item.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .booking-airbnb { background-color: #fee2e2; border-left: 4px solid #ef4444; }
+        .booking-booking { background-color: #dbeafe; border-left: 4px solid #3b82f6; }
+        .booking-vrbo { background-color: #dcfce7; border-left: 4px solid #22c55e; }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Sidebar -->
+    <aside class="fixed left-0 top-0 h-full w-64 bg-white shadow-xl z-50">
+        <div class="p-6 border-b border-gray-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center text-white">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">SyncStays</h1>
+                    <p class="text-xs text-gray-500">Proprietário</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="p-4 space-y-1">
+            <button onclick="showSection('dashboard')" class="sidebar-item active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-gray-600">
+                <i class="fas fa-chart-line w-5"></i>Dashboard
+            </button>
+            <button onclick="showSection('calendar')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-gray-600">
+                <i class="fas fa-calendar-alt w-5"></i>Calendário
+            </button>
+            <button onclick="showSection('properties')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-gray-600">
+                <i class="fas fa-building w-5"></i>Imóveis
+            </button>
+            <button onclick="showSection('financial')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-medium text-gray-600">
+                <i class="fas fa-wallet w-5"></i>Faturamento
+            </button>
+        </nav>
+
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100 bg-white">
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold" id="user-avatar">CS</div>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900" id="user-name">Carlos Silva</p>
+                    <p class="text-xs text-gray-500">Proprietário</p>
+                </div>
+                <button onclick="logout()" class="text-gray-400 hover:text-red-600">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-64 p-8">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800" id="page-title">Dashboard</h2>
+                <p class="text-gray-500 mt-1">Visão geral dos seus imóveis</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <select class="px-4 py-2 rounded-xl border border-gray-200 bg-white">
+                    <option>Todos os imóveis</option>
+                    <option>Apartamento Copacabana</option>
+                    <option>Casa Jurerê</option>
+                </select>
+                <button class="w-10 h-10 rounded-xl bg-white shadow flex items-center justify-center text-gray-600 relative">
+                    <i class="fas fa-bell"></i>
+                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">3</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="space-y-6">
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-white rounded-2xl p-6 shadow-sm card-hover border border-gray-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 rounded-xl bg-indigo-50 text-indigo-600">
+                            <i class="fas fa-calendar-check text-xl"></i>
+                        </div>
+                        <span class="text-green-500 text-sm font-medium"><i class="fas fa-arrow-up"></i> 12%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">18</h3>
+                    <p class="text-gray-500 text-sm">Reservas este mês</p>
+                </div>
+                <div class="bg-white rounded-2xl p-6 shadow-sm card-hover border border-gray-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 rounded-xl bg-green-50 text-green-600">
+                            <i class="fas fa-dollar-sign text-xl"></i>
+                        </div>
+                        <span class="text-green-500 text-sm font-medium"><i class="fas fa-arrow-up"></i> 8%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">R$ 14.350</h3>
+                    <p class="text-gray-500 text-sm">Faturamento bruto</p>
+                </div>
+                <div class="bg-white rounded-2xl p-6 shadow-sm card-hover border border-gray-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 rounded-xl bg-purple-50 text-purple-600">
+                            <i class="fas fa-percentage text-xl"></i>
+                        </div>
+                        <span class="text-green-500 text-sm font-medium"><i class="fas fa-arrow-up"></i> 5%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">78%</h3>
+                    <p class="text-gray-500 text-sm">Taxa de ocupação</p>
+                </div>
+                <div class="bg-white rounded-2xl p-6 shadow-sm card-hover border border-gray-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 rounded-xl bg-orange-50 text-orange-600">
+                            <i class="fas fa-star text-xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">4.8</h3>
+                    <p class="text-gray-500 text-sm">Avaliação média</p>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-lg text-gray-800 mb-4">Faturamento por Canal</h3>
+                    <canvas id="revenueChart" height="200"></canvas>
+                </div>
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-lg text-gray-800 mb-4">Ocupação por Imóvel</h3>
+                    <canvas id="occupancyChart" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Calendar Preview -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-lg text-gray-800">Calendário Unificado - Março 2026</h3>
+                    <button onclick="showSection('calendar')" class="text-indigo-600 text-sm font-medium">Ver completo</button>
+                </div>
+                <div class="grid grid-cols-7 gap-2 mb-2">
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Dom</div>
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Seg</div>
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Ter</div>
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Qua</div>
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Qui</div>
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Sex</div>
+                    <div class="text-center text-sm font-semibold text-gray-500 py-2">Sáb</div>
+                </div>
+                <div class="grid grid-cols-7 gap-2">
+                    <!-- Week 1 -->
+                    <div class="bg-gray-50 rounded-lg p-2 h-24"></div>
+                    <div class="bg-gray-50 rounded-lg p-2 h-24"></div>
+                    <div class="bg-gray-50 rounded-lg p-2 h-24"></div>
+                    <div class="bg-gray-50 rounded-lg p-2 h-24"></div>
+                    <div class="bg-gray-50 rounded-lg p-2 h-24"></div>
+                    <div class="bg-gray-50 rounded-lg p-2 h-24"></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24">
+                        <div class="font-semibold text-gray-700">1</div>
+                    </div>
+                    
+                    <!-- Week 2 -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"><div class="font-semibold text-gray-700">2</div></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"><div class="font-semibold text-gray-700">3</div></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"><div class="font-semibold text-gray-700">4</div></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"><div class="font-semibold text-gray-700">5</div></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"><div class="font-semibold text-gray-700">6</div></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"><div class="font-semibold text-gray-700">7</div></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"><div class="font-semibold text-gray-700">8</div></div>
+                    
+                    <!-- Week 3 with bookings -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"><div class="font-semibold text-gray-700">9</div></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"><div class="font-semibold text-gray-700">10</div></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"><div class="font-semibold text-gray-700">11</div></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"><div class="font-semibold text-gray-700">12</div></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24"><div class="font-semibold text-gray-700">13</div></div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24">
+                        <div class="font-semibold text-gray-700">14</div>
+                        <div class="booking-airbnb p-1 rounded text-xs mt-1">
+                            <div class="font-bold text-red-600">CHECK-IN</div>
+                            <div>Ana Silva</div>
+                        </div>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-2 h-24">
+                        <div class="font-semibold text-gray-700">15</div>
+                        <div class="booking-airbnb p-1 rounded text-xs mt-1">
+                            <div class="truncate">Ana Silva</div>
+                        </div>
+                        <div class="booking-booking p-1 rounded text-xs mt-1">
+                            <div class="font-bold text-blue-600">CHECK-IN</div>
+                            <div>Pedro Costa</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Other Sections -->
+        <section id="calendar-section" class="hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+                <i class="fas fa-calendar-alt text-4xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Calendário Completo</h3>
+                <p class="text-gray-500">Visualização detalhada de todas as reservas sincronizadas.</p>
+            </div>
+        </section>
+
+        <section id="properties-section" class="hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 card-hover">
+                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-800 mb-1">Apartamento Copacabana</h3>
+                        <p class="text-sm text-gray-500 mb-4"><i class="fas fa-map-marker-alt mr-1"></i>Av. Atlântica, 123 - Rio de Janeiro, RJ</p>
+                        <div class="flex gap-2 mb-4">
+                            <span class="px-2 py-1 bg-gray-100 rounded text-xs"><i class="fas fa-bed mr-1"></i>2</span>
+                            <span class="px-2 py-1 bg-gray-100 rounded text-xs"><i class="fas fa-bath mr-1"></i>2</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                            <div>
+                                <p class="text-xs text-gray-500">Diária</p>
+                                <p class="text-xl font-bold text-indigo-600">R$ 450</p>
+                            </div>
+                            <button class="text-indigo-600 hover:text-indigo-700"><i class="fas fa-edit"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 card-hover">
+                    <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400&h=300&fit=crop" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-800 mb-1">Casa Jurerê</h3>
+                        <p class="text-sm text-gray-500 mb-4"><i class="fas fa-map-marker-alt mr-1"></i>Rua das Palmeiras, 45 - Florianópolis, SC</p>
+                        <div class="flex gap-2 mb-4">
+                            <span class="px-2 py-1 bg-gray-100 rounded text-xs"><i class="fas fa-bed mr-1"></i>4</span>
+                            <span class="px-2 py-1 bg-gray-100 rounded text-xs"><i class="fas fa-bath mr-1"></i>3</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                            <div>
+                                <p class="text-xs text-gray-500">Diária</p>
+                                <p class="text-xl font-bold text-indigo-600">R$ 890</p>
+                            </div>
+                            <button class="text-indigo-600 hover:text-indigo-700"><i class="fas fa-edit"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="financial-section" class="hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+                <i class="fas fa-wallet text-4xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Faturamento Detalhado</h3>
+                <p class="text-gray-500">Acompanhe receitas, despesas e lucratividade por imóvel e canal.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', () => {
+            // Revenue Chart
+            new Chart(document.getElementById('revenueChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Airbnb', 'Booking.com', 'VRBO', 'Direto'],
+                    datasets: [{
+                        data: [8500, 4200, 2100, 550],
+                        backgroundColor: ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // Occupancy Chart
+            new Chart(document.getElementById('occupancyChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Copacabana', 'Jurerê'],
+                    datasets: [{
+                        label: 'Ocupação %',
+                        data: [85, 72],
+                        backgroundColor: '#667eea'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+        });
+
+        function showSection(section) {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(section + '-section').classList.remove('hidden');
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const titles = {
+                'dashboard': 'Dashboard',
+                'calendar': 'Calendário Unificado',
+                'properties': 'Meus Imóveis',
+                'financial': 'Faturamento'
+            };
+            document.getElementById('page-title').textContent = titles[section];
+        }
+
+        function logout() {
+            localStorage.removeItem('syncstays_user');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
